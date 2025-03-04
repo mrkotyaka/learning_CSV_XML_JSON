@@ -2,8 +2,10 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
 import com.opencsv.CSVReader;
-import com.opencsv.CSVWriter;
 import com.opencsv.bean.*;
+import org.json.simple.JSONArray;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -19,18 +21,60 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Main {
-    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
+    public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException, ParseException {
 
+        //task1
         String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};
         String fileName = "data.csv";
 
         List<Employee> list = parseCSV(columnMapping, fileName);
         String json = listToJson(list);
-        writeString(json,"data.json");
+        writeString(json, "data.json");
 
-        list = parseXML("data.xml");
-        json = listToJson(list);
-        writeString(json,"data2.json");
+        //task2
+        List<Employee> list2 = parseXML("data.xml");
+        String json2 = listToJson(list2);
+        writeString(json2, "data2.json");
+
+        //task3
+        String json3 = readString("data.json");
+
+        List<Employee> list3 = jsonToList(json3);
+
+        for (Employee employee : list3) {
+            System.out.println(employee);
+        }
+    }
+
+    private static List<Employee> jsonToList(String json) throws ParseException {
+        List<Employee> list = new ArrayList<>();
+
+        JSONParser parser = new JSONParser();
+        JSONArray employee = (JSONArray) parser.parse(json);
+        GsonBuilder builder = new GsonBuilder();
+        Gson gson = builder.create();
+
+        for (Object emp: employee){
+            list.add(gson.fromJson(emp.toString(), Employee.class));
+        }
+
+        return list;
+    }
+
+    private static String readString(String fileName) {
+        String line;
+        StringBuilder stringBuilder = new StringBuilder();
+        try {
+            BufferedReader reader = new BufferedReader(new FileReader(fileName));
+
+            while ((line = reader.readLine()) != null) {
+                stringBuilder.append(line.trim());
+            }
+        } catch (IOException er) {
+            er.printStackTrace();
+        }
+
+        return stringBuilder.toString();
     }
 
     private static List<Employee> parseXML(String fileName) throws ParserConfigurationException, IOException, SAXException {
@@ -74,6 +118,8 @@ public class Main {
 
         return list;
     }
+
+
 
     private static List<Employee> parseCSV(String[] columnMapping, String fileName) {
         try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
