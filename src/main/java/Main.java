@@ -20,36 +20,17 @@ import java.util.List;
 
 public class Main {
     public static void main(String[] args) throws ParserConfigurationException, IOException, SAXException {
-//        String[] employee = "1,John,Smith,USA,25".split(",");
-//        String[] employee2 = "2,Inav,Petrov,RU,23".split(",");
-//
-//        List<String[]> employees = new ArrayList<>();
-//        employees.add(employee);
-//        employees.add(employee2);
-//
-//        try (CSVWriter writer = new CSVWriter(new FileWriter("data.csv"))){
-//            employees.forEach(writer::writeNext);
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
 
         String[] columnMapping = {"id", "firstName", "lastName", "country", "age"};
         String fileName = "data.csv";
+
         List<Employee> list = parseCSV(columnMapping, fileName);
-
-//        for (Employee employee1 : list) {
-//            System.out.println(employee1.firstName + " " + employee1.lastName + " " + employee1.country + " " + employee1.age);
-//        }
-
-
         String json = listToJson(list);
-        writeString(json);
+        writeString(json,"data.json");
 
-
-//        List<Employee> list = parseXML("data.xml");
         list = parseXML("data.xml");
         json = listToJson(list);
-        writeString(json);
+        writeString(json,"data2.json");
     }
 
     private static List<Employee> parseXML(String fileName) throws ParserConfigurationException, IOException, SAXException {
@@ -58,14 +39,11 @@ public class Main {
         DocumentBuilder builder = factory.newDocumentBuilder();
         Document doc = builder.parse(new File(fileName));
 
-//        Node root = doc.getDocumentElement();
         NodeList nodeList = doc.getElementsByTagName("employee");
-
 
         List<Employee> list = new ArrayList<>();
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
-//            System.out.println("Teкyщий элeмeнт: " + node.getNodeName());
             if (Node.ELEMENT_NODE == node.getNodeType()) {
                 Element employee = (Element) node;
 
@@ -89,47 +67,10 @@ public class Main {
                 Element elmAge = (Element) childAge.item(0);
                 int age = Integer.parseInt(elmAge.getTextContent());
 
-
-//                for (int j = 0; j < employee.getChildNodes().getLength(); j++) {
-//                    Node child = employee.getChildNodes().item(j);
-//                    if (Node.ELEMENT_NODE == child.getNodeType()) {
-//                        switch (child.getNodeName()) {
-//                            case "id":
-//                                long id = Long.parseLong(child.getTextContent());
-//                                System.out.println(id);
-//                                break;
-//                            case "firstName":
-//                                String firstName = child.getTextContent();
-//                                System.out.println(firstName);
-//                                break;
-//                            case "lastName":
-//                                String lastName = child.getTextContent();
-//                                System.out.println(lastName);
-//                                break;
-//                            case "country":
-//                                String country = child.getTextContent();
-//                                System.out.println(country);
-//                                break;
-//                            case "age":
-//                                int age = Integer.parseInt(child.getTextContent());
-//                                System.out.println(age);
-//                                break;
-//                        }
-//                    }
-//                }
-
                 Employee emp = new Employee(id, firstName, lastName, country, age);
                 list.add(emp);
             }
         }
-
-        for (Employee employee : list) {
-            System.out.println(employee.id + " " + employee.firstName + " " + employee.lastName + " " + employee.country);
-        }
-
-//        for (int i = 0; i < nodeList.getLength(); i++) {
-//            Node node = nodeList.item(i);
-//        }
 
         return list;
     }
@@ -160,13 +101,11 @@ public class Main {
         builder.setPrettyPrinting();
         Gson gson = builder.create();
 
-//        System.out.println(gson.toJson(list));
-
         return gson.toJson(list, listType);
     }
 
-    private static void writeString(String json) {
-        try (Writer writer = new FileWriter("data.json")) {
+    private static void writeString(String json, String fileName) {
+        try (Writer writer = new FileWriter(fileName)) {
             writer.write(json);
 
         } catch (IOException e) {
