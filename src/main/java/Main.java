@@ -47,6 +47,7 @@ public class Main {
     }
 
     private static List<Employee> jsonToList(String json) throws ParseException {
+
         List<Employee> list = new ArrayList<>();
 
         JSONParser parser = new JSONParser();
@@ -54,7 +55,7 @@ public class Main {
         GsonBuilder builder = new GsonBuilder();
         Gson gson = builder.create();
 
-        for (Object emp: employee){
+        for (Object emp : employee) {
             list.add(gson.fromJson(emp.toString(), Employee.class));
         }
 
@@ -62,11 +63,11 @@ public class Main {
     }
 
     private static String readString(String fileName) {
+
         String line;
         StringBuilder stringBuilder = new StringBuilder();
         try {
             BufferedReader reader = new BufferedReader(new FileReader(fileName));
-
             while ((line = reader.readLine()) != null) {
                 stringBuilder.append(line.trim());
             }
@@ -84,8 +85,8 @@ public class Main {
         Document doc = builder.parse(new File(fileName));
 
         NodeList nodeList = doc.getElementsByTagName("employee");
-
         List<Employee> list = new ArrayList<>();
+
         for (int i = 0; i < nodeList.getLength(); i++) {
             Node node = nodeList.item(i);
             if (Node.ELEMENT_NODE == node.getNodeType()) {
@@ -120,10 +121,9 @@ public class Main {
     }
 
 
-
     private static List<Employee> parseCSV(String[] columnMapping, String fileName) {
-        try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
 
+        try (CSVReader csvReader = new CSVReader(new FileReader(fileName))) {
             ColumnPositionMappingStrategy<Employee> strategy =
                     new ColumnPositionMappingStrategy<>();
             strategy.setType(Employee.class);
@@ -140,9 +140,8 @@ public class Main {
     }
 
     private static String listToJson(List<Employee> list) {
-        Type listType = new TypeToken<List<Employee>>() {
-        }.getType();
 
+        Type listType = new TypeToken<List<Employee>>() {}.getType();
         GsonBuilder builder = new GsonBuilder();
         builder.setPrettyPrinting();
         Gson gson = builder.create();
@@ -151,9 +150,9 @@ public class Main {
     }
 
     private static void writeString(String json, String fileName) {
+
         try (Writer writer = new FileWriter(fileName)) {
             writer.write(json);
-
         } catch (IOException e) {
             e.printStackTrace();
         }
